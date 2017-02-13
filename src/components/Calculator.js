@@ -1,35 +1,15 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
 
 import "./Calculator.css";
-
-import { operators } from "../operators";
-import {
-	  enterNumber
-	, setOperator
-	, percentage
-	, clear
-	, evaluate
-	, toggleNegative
-} from "../ducks/calculator";
 
 import CalculatorButton from "./CalculatorButton/CalculatorButton";
 import Display from "./Display/Display";
 
 export class Calculator extends Component {
 	render() {
-		const {
-			  currentValue
-			, enterNumber
-			, setOperator
-			, percentage
-			, clear
-			, evaluate
-			, toggleNegative
-		} = this.props;
-		const numberButtons = [ 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 ].map( ( number ) => (
+		const numberButtons = [ 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 ].map( number => (
 			<CalculatorButton
-				callback={ () => enterNumber( number ) }
+				callback={ () => null }
 				key={ number }
 				value={ number }
 				wide={ number === 0 }
@@ -38,58 +18,58 @@ export class Calculator extends Component {
 
 		return (
 			<main className="calculator">
-				<Display value={ currentValue } />
+				<Display value={ 0 } />
 				<div className="calculator__buttons-wrapper">
 					<section className="calculator__left-buttons">
 						<CalculatorButton
 							backgroundColor="#d6d6d6"
-							callback={ clear }
+							callback={ () => null }
 							value="AC"
 						/>
 						<CalculatorButton
 							backgroundColor="#d6d6d6"
-							callback={ toggleNegative }
+							callback={ () => null }
 							value="+/-"
 						/>
 						<CalculatorButton
 							backgroundColor="#d6d6d6"
-							callback={ percentage }
+							callback={ () => null }
 							value="%"
 						/>
 						{ numberButtons }
 						<CalculatorButton
-							callback={ () => enterNumber( "." ) }
+							callback={ () => null }
 							value="."
 						/>
 					</section>
 					<section className="calculator__operator-buttons">
 						<CalculatorButton
 							backgroundColor="#f5923e"
-							callback={ () => setOperator( operators.DIVIDE ) }
+							callback={ () => null }
 							color="#ffffff"
 							value="÷"
 						/>
 						<CalculatorButton
 							backgroundColor="#f5923e"
-							callback={ () => setOperator( operators.MULTIPLY ) }
+							callback={ () => null }
 							color="#ffffff"
 							value="×"
 						/>
 						<CalculatorButton
 							backgroundColor="#f5923e"
-							callback={ () => setOperator( operators.SUBTRACT ) }
+							callback={ () => null }
 							color="#ffffff"
 							value="-"
 						/>
 						<CalculatorButton
 							backgroundColor="#f5923e"
-							callback={ () => setOperator( operators.ADD ) }
+							callback={ () => null }
 							color="#ffffff"
 							value="+"
 						/>
 						<CalculatorButton
 							backgroundColor="#f5923e"
-							callback={ evaluate }
+							callback={ () => null }
 							color="#ffffff"
 							value="="
 						/>
@@ -100,11 +80,4 @@ export class Calculator extends Component {
 	}
 }
 
-export default connect( state => state, {
-	  enterNumber
-	, setOperator
-	, percentage
-	, clear
-	, evaluate
-	, toggleNegative
-} )( Calculator );
+export default Calculator;

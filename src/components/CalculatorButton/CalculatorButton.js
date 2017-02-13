@@ -5,7 +5,6 @@ import "./CalculatorButton.css";
 export default function CalculatorButton( { backgroundColor, callback, color, value, wide } ) {
 	return (
 		<button
-			onClick={ callback }
 			className={ `calculator-button${ wide ? " calculator-button--wide" : "" }` }
 			style={ { backgroundColor, color } }
 		>
