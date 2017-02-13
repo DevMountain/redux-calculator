@@ -1,0 +1,39 @@
+.display {
+	background-color: #999999;
+	box-sizing: border-box;
+	color: #ffffff;
+	font-size: 50px;
+	font-weight: lighter;
+	height: 80px;
+	padding: 20px 15px 5px 0;
+	position: relative;
+	text-align: right;
+	width: 100%;
+}
+
+.display__window-button-wrapper {
+	display: flex;
+	justify-content: space-between;
+	left: 4px;
+	position: absolute;
+	top: 3px;
+	width: 55px;
+}
+
+.display__window-button {
+	border-radius: 6px;
+	height: 12px;
+	width: 12px;
+}
+
+.display__window-button:nth-child(1) {
+	background-color: #fd615c;
+}
+
+.display__window-button:nth-child(2) {
+	background-color: #fdbb40;
+}
+
+.display__window-button:nth-child(3) {
+	background-color: #33c847;
+}

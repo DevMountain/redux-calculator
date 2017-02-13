@@ -1,0 +1,24 @@
+.calculator {
+	border: 1px solid #8e8e8e;
+	border-radius: 6px;
+	box-shadow: 10px 15px 34px -5px #595959;
+	height: 315px;
+	margin: 100px auto;
+	overflow: hidden;
+	width: 228px;
+}
+
+.calculator__buttons-wrapper {
+	display: flex;
+}
+
+.calculator__left-buttons {
+	display: flex;
+	flex: 3;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.calculator__operator-buttons {
+	flex: 1;
+}
