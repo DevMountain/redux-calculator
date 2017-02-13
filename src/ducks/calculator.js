@@ -4,7 +4,6 @@ const CLEAR = "CLEAR";
 const ENTER_NUMBER = "ENTER_NUMBER";
 const EVALUATE = "EVALUATE";
 const PERCENTAGE = "PERCENTAGE";
-const SET_DECIMAL = "SET_DECIMAL";
 const SET_OPERATOR = "SET_OPERATOR";
 const TOGGLE_NEGATIVE = "TOGGLE_NEGATIVE";
 
@@ -30,7 +29,7 @@ export default function calculator( state = initialState, action ) {
 		case PERCENTAGE:
 			return {
 				  ...state
-				, currentValue: parseFloat( state.currentValue ) / 100
+				, currentValue: ( parseFloat( state.currentValue ) / 100 ).toString()
 			};
 		case CLEAR:
 			return {
@@ -40,19 +39,14 @@ export default function calculator( state = initialState, action ) {
 			};
 		case EVALUATE:
 			return {
-				  currentValue: calculate( parseFloat( state.currentValue ), state.previousValue, state.operator )
+				  currentValue: calculate( parseFloat( state.currentValue ), state.previousValue, state.operator ).toString()
 				, operator: null
 				, previousValue: 0
-			};
-		case SET_DECIMAL:
-			return {
-				...state
-				, currentValue: parseFloat( state.currentValue % 1 ) === 0 ? state.currentValue + "." : state.currentValue
 			};
 		case TOGGLE_NEGATIVE:
 			return {
 				  ...state
-				, currentValue: -parseFloat( state.currentValue )
+				, currentValue: ( -parseFloat( state.currentValue ) ).toString()
 			};
 		default:
 			return state;
