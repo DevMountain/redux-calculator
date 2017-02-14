@@ -48,7 +48,7 @@ Now that our application overall knows about our Redux store, we need to connect
 
 <summary>`mapStateToProps` specific properties example:</summary>
 
-```javascript
+```
 function mapStateToProps( state ) {
 	return { currentValue: state.currentValue };
 }
@@ -84,7 +84,98 @@ ___
 
 </details>
 
+
 You should now be able to `console.log( this.props )` inside of `Calculator`'s render method and see an object containing state information.
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+<details>
+
+<summary>`src/ducks/calculator.js`</summary>
+
+```javascript
+const initialState = {
+	  currentValue: "0"
+	, operator: null
+	, previousValue: 0
+};
+
+export default function calculator( state = initialState, action ) {
+	return state;
+}
+```
+
+</details>
+
+<details>
+
+<summary>`src/store.js`</summary>
+
+```javascript
+import { createStore } from "redux";
+
+import calculator from "./ducks/calculator";
+
+export default createStore( calculator );
+```
+
+</details>
+
+<details>
+
+<summary>`src/index.js`</summary>
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+
+import "./index.css";
+
+import store from "./store";
+
+import Calculator from "./components/Calculator";
+
+ReactDOM.render(
+	<Provider store={ store }>
+		<Calculator />
+	</Provider>,
+	document.getElementById( 'root' )
+);
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/Calculator.js`</summary>
+
+```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./Calculator.css";
+
+import CalculatorButton from "./CalculatorButton/CalculatorButton";
+import Display from "./Display/Display";
+
+export class Calculator extends Component {
+	/* Calculator definition */
+}
+
+function mapStateToProps( state ) {
+	return state;
+}
+
+export default connect( mapStateToProps )( Calculator );
+```
+
+</details>
+
+</details>
+
 
 ## Contributions
 
