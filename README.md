@@ -333,7 +333,7 @@ export class Calculator extends Component {
 			, clear
 			, toggleNegative
 		} = this.props;
-		const numberButtons = [ 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 ].map( ( number ) => (
+		const numberButtons = [ 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 ].map( number => (
 			<CalculatorButton
 				callback={ () => enterNumber( number ) }
 				key={ number }
