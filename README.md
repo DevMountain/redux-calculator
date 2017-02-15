@@ -484,6 +484,292 @@ CalculatorButton.defaultProps = {
 
 </details>
 
+### Step 3
+
+**Summary**
+
+In this step we will implement the functionality to handle mathematical operations.
+
+**Instructions**
+
+* Create `EVALUATE` and `SET_OPERATOR` action types and their corresponding action creators
+* Create a `calculate` function in `src/calculate.js`
+* Refactor the `calculator` reducer to make use of `calculate` and handle the new actions
+* Map the new action creators to the `Calculator` component definition's props
+* Assign the action creators to the appropriate JSX elements
+
+**Detailed Instructions**
+
+Begin this step in `src/ducks/calculator.js`. Create two new action types - `EVALUATE` and `SET_OPERATOR`as well as corresponding action creators. The `evaluate` action creator should simply return an object with a type of `EVAlUATE`, the `setOperator` action creator should take a parameter of `operator` and return an object with the type `SET_OPERATOR` and the `operator`.
+
+Now that our action creators are finished, we need to find a way to actually calculate these operations. Open up `src/calculate.js` and create the function `calculate`. `calculate` should be exported and take three parameters - `currentValue`, `previousValue` and `operator`. Because the operator we are storing on state is a string, we need to check what type of operator we are working with before calculating the result. To do this we'll need import the provided `operators` object from `src/operators.js`. The `operators` object is just a list of constants that looks like this:
+
+```javascript
+export const operators = {
+	  ADD: "ADD"
+	, DIVIDE: "DIVIDE"
+	, MULTIPLY: "MULTIPLY"
+	, SUBTRACT: "SUBTRACT"
+};
+```
+
+The reason we store them this way is to avoid "magic strings". Hard coding the string into multiple places comes with a lot of downsides, such as potential for typos, needing to find and change all of them if the string is ever changed, and confusion from developers later reading the code.
+
+Now that we have our object full of operators, let's add a `switch` statement to the `calculate` function that checks the `operator` parameter. Add a `case` for each of the possible operators that returns the value of the necessary calculation (i.e `case operators.DIVIDE: return previousValue / currentValue`). For safety, add a default case that simply returns `currentValue`.
+
+Import the `calculate` function to `src/ducks/calculator.js`. Add a case to the reducer that handles `EVALUATE` actions. This case should return an object where `operator` and `previousValue` are returned to their initial values, and `currentValue` is set equal to the result of the `calculate` function. A few notes for `currentValue`:
+
+* `state.currentValue` is a string, and `calculate will be expecting a number
+* We want the updated `currentValue` to be a string as well, don't forget to convert the result of `calculate`
+
+We now need to add a case for handling the `SET_OPERATOR` action type. This case should return an object where `currentValue` is set to `"0"`, and `operator` is set to `action.operator`. `previousValue` will be a little tricky. To know what to set `previousValue` to, we first have to check whether or not there is already on operator on state. If there is not an operator on state, we can simply set `previousValue` equal to `state.currentValue`, if there *is* already an operator on state then we need to set `previousValue` equal to the result of the `calculate` function. It will look something like this:
+`previousValue: state.operator ? calculate( parseFloat( state.currentValue ), state.previousValue, state.operator ) : parseFloat( state.currentValue )`.
+
+Let's go put these action creators to use in `src/components/Calculator.js`! Import the two new action creators as well as the `operators` object. Add these action creators to the object passed as the second argument to `connect`. Pass the `evaluate` action creator to the `callback` prop on the = button. Change the `callback` prop for the +, -, ÷, and × buttons so that it invokes `setOperator`, passing the appropriate operator from the `operators` object.
+
+You should now have a functioning calculator capable of the same basic functionality as your computer's calculator!
+
+<details>
+
+<summary>**Code Solution**</summary>
+
+<details>
+
+<summary>`src/ducks/calculator.js`</summary>
+
+```javascript
+import { calculate } from "../calculate";
+
+const CLEAR = "CLEAR";
+const ENTER_NUMBER = "ENTER_NUMBER";
+const EVALUATE = "EVALUATE";
+const PERCENTAGE = "PERCENTAGE";
+const SET_OPERATOR = "SET_OPERATOR";
+const TOGGLE_NEGATIVE = "TOGGLE_NEGATIVE";
+
+const initialState = {
+	  currentValue: "0"
+	, operator: null
+	, previousValue: 0
+};
+
+export default function calculator( state = initialState, action ) {
+	switch ( action.type ) {
+		case ENTER_NUMBER:
+			return {
+				  ...state
+				, currentValue: state.currentValue === "0" ? action.number.toString() : `${ state.currentValue }${ action.number }`
+			};
+		case SET_OPERATOR:
+			return {
+				  currentValue: "0"
+				, operator: action.operator
+				, previousValue: state.operator ? calculate( parseFloat( state.currentValue ), state.previousValue, state.operator ) : parseFloat( state.currentValue )
+			};
+		case PERCENTAGE:
+			return {
+				  ...state
+				, currentValue: ( parseFloat( state.currentValue ) / 100 ).toString()
+			};
+		case CLEAR:
+			return {
+				  currentValue: "0"
+				, operator: null
+				, previousValue: 0
+			};
+		case EVALUATE:
+			return {
+				  currentValue: calculate( parseFloat( state.currentValue ), state.previousValue, state.operator ).toString()
+				, operator: null
+				, previousValue: 0
+			};
+		case TOGGLE_NEGATIVE:
+			return {
+				  ...state
+				, currentValue: ( -parseFloat( state.currentValue ) ).toString()
+			};
+		default:
+			return state;
+	}
+}
+
+export function clear() {
+	return { type: CLEAR };
+}
+
+export function enterNumber( number ) {
+	return { number, type: ENTER_NUMBER };
+}
+
+export function evaluate() {
+	return { type: EVALUATE };
+}
+
+export function percentage() {
+	return { type: PERCENTAGE };
+}
+
+export function setOperator( operator ) {
+	return { operator, type: SET_OPERATOR };
+}
+
+export function toggleNegative() {
+	return { type: TOGGLE_NEGATIVE };
+}
+```
+
+</details>
+
+<details>
+
+<summary>`src/calculate.js`</summary>
+
+```javascript
+import { operators } from "./operators";
+
+export function calculate( currentValue, previousValue, operator ) {
+	switch ( operator ) {
+		case operators.ADD:
+			return previousValue + currentValue;
+		case operators.DIVIDE:
+			return previousValue / currentValue;
+		case operators.MULTIPLY:
+			return previousValue * currentValue;
+		case operators.SUBTRACT:
+			return previousValue - currentValue;
+		default:
+			return currentValue;
+	}
+}
+```
+
+</details>
+
+<details>
+
+<summary>`src/components/Calculator.js`</summary>
+
+```jsx
+import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import "./Calculator.css";
+
+import { operators } from "../operators";
+import {
+	  enterNumber
+	, setOperator
+	, percentage
+	, clear
+	, evaluate
+	, toggleNegative
+} from "../ducks/calculator";
+
+import CalculatorButton from "./CalculatorButton/CalculatorButton";
+import Display from "./Display/Display";
+
+export class Calculator extends Component {
+	render() {
+		const {
+			  currentValue
+			, enterNumber
+			, setOperator
+			, percentage
+			, clear
+			, evaluate
+			, toggleNegative
+		} = this.props;
+		const numberButtons = [ 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 ].map( ( number ) => (
+			<CalculatorButton
+				callback={ () => enterNumber( number ) }
+				key={ number }
+				value={ number }
+				wide={ number === 0 }
+			/>
+		) );
+
+		return (
+			<main className="calculator">
+				<Display value={ currentValue } />
+				<div className="calculator__buttons-wrapper">
+					<section className="calculator__left-buttons">
+						<CalculatorButton
+							backgroundColor="#d6d6d6"
+							callback={ clear }
+							value="AC"
+						/>
+						<CalculatorButton
+							backgroundColor="#d6d6d6"
+							callback={ toggleNegative }
+							value="+/-"
+						/>
+						<CalculatorButton
+							backgroundColor="#d6d6d6"
+							callback={ percentage }
+							value="%"
+						/>
+						{ numberButtons }
+						<CalculatorButton
+							callback={ () => enterNumber( "." ) }
+							value="."
+						/>
+					</section>
+					<section className="calculator__operator-buttons">
+						<CalculatorButton
+							backgroundColor="#f5923e"
+							callback={ () => setOperator( operators.DIVIDE ) }
+							color="#ffffff"
+							value="÷"
+						/>
+						<CalculatorButton
+							backgroundColor="#f5923e"
+							callback={ () => setOperator( operators.MULTIPLY ) }
+							color="#ffffff"
+							value="×"
+						/>
+						<CalculatorButton
+							backgroundColor="#f5923e"
+							callback={ () => setOperator( operators.SUBTRACT ) }
+							color="#ffffff"
+							value="-"
+						/>
+						<CalculatorButton
+							backgroundColor="#f5923e"
+							callback={ () => setOperator( operators.ADD ) }
+							color="#ffffff"
+							value="+"
+						/>
+						<CalculatorButton
+							backgroundColor="#f5923e"
+							callback={ evaluate }
+							color="#ffffff"
+							value="="
+						/>
+					</section>
+				</div>
+			</main>
+		);
+	}
+}
+
+function mapStateToProps( state ) {
+	return state;
+}
+
+export default connect( mapStateToProps, {
+	  enterNumber
+	, setOperator
+	, percentage
+	, clear
+	, evaluate
+	, toggleNegative
+} )( Calculator );
+```
+
+</details>
+
+</details>
+
 ## Contributions
 
 ### Contributions
