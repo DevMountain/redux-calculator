@@ -213,7 +213,7 @@ Begin by writing a `switch` statement that checks `action.type` with a `default`
 <summary>The `ENTER_NUMBER`  case should look something like this:</summary>
 
 ```javascript
-return Object.assign( state, {
+return Object.assign( {}, state, {
 	// If state.currentValue is at its default, simply replace it with the given number
 	// Otherwise, concatenate the strings
 	currentValue: state.currentValue === "0" ? action.number.toString() : state.currentValue + action.number.toString()
@@ -259,15 +259,13 @@ const initialState = {
 export default function calculator( state = initialState, action ) {
 	switch ( action.type ) {
 		case ENTER_NUMBER:
-			return {
-				  ...state
-				, currentValue: state.currentValue === "0" ? action.number.toString() : `${ state.currentValue }${ action.number }`
-			};
+			return Object.assign(
+				  {}
+				, state
+				, { currentValue: state.currentValue === "0" ? action.number.toString() : state.currentValue + action.number.toString() }
+			);
 		case PERCENTAGE:
-			return {
-				  ...state
-				, currentValue: ( parseFloat( state.currentValue ) / 100 ).toString()
-			};
+			return Object.assign( {}, state, { currentValue: ( parseFloat( state.currentValue ) / 100 ).toString() } );
 		case CLEAR:
 			return {
 				  currentValue: "0"
@@ -275,10 +273,7 @@ export default function calculator( state = initialState, action ) {
 				, previousValue: 0
 			};
 		case TOGGLE_NEGATIVE:
-			return {
-				  ...state
-				, currentValue: ( -parseFloat( state.currentValue ) ).toString()
-			};
+			return Object.assign( {}, state, { currentValue: ( -parseFloat( state.currentValue ) ).toString() } );
 		default:
 			return state;
 	}
@@ -556,10 +551,13 @@ const initialState = {
 export default function calculator( state = initialState, action ) {
 	switch ( action.type ) {
 		case ENTER_NUMBER:
-			return {
-				  ...state
-				, currentValue: state.currentValue === "0" ? action.number.toString() : `${ state.currentValue }${ action.number }`
-			};
+			return Object.assign(
+				  {}
+				, state
+				, {
+					currentValue: state.currentValue === "0" ? action.number.toString() : state.currentValue + action.number.toString()
+				}
+			);
 		case SET_OPERATOR:
 			return {
 				  currentValue: "0"
@@ -567,10 +565,7 @@ export default function calculator( state = initialState, action ) {
 				, previousValue: state.operator ? calculate( parseFloat( state.currentValue ), state.previousValue, state.operator ) : parseFloat( state.currentValue )
 			};
 		case PERCENTAGE:
-			return {
-				  ...state
-				, currentValue: ( parseFloat( state.currentValue ) / 100 ).toString()
-			};
+			return Object.assign( {}, state, { currentValue: ( parseFloat( state.currentValue ) / 100 ).toString() } );
 		case CLEAR:
 			return {
 				  currentValue: "0"
@@ -584,10 +579,7 @@ export default function calculator( state = initialState, action ) {
 				, previousValue: 0
 			};
 		case TOGGLE_NEGATIVE:
-			return {
-				  ...state
-				, currentValue: ( -parseFloat( state.currentValue ) ).toString()
-			};
+			return Object.assign( {}, state, { currentValue: ( -parseFloat( state.currentValue ) ).toString() } );
 		default:
 			return state;
 	}
