@@ -36,6 +36,8 @@ Beneath `initialState` we'll create the reducer function. Create and export by d
 * `state`, which defaults to `initialState`. An object representation of the application's current state.
 * `action`, an object describing what has prompted the state change.
 
+For now, `calculator` should simply return `state`.
+
 We can now use this reducer to create our Redux store. Open up `src/store.js` and import `createStore` from Redux and our `calculator` reducer. Create the store by invoking `createStore` and passing `calculator` as an argument. Export the result of this invocation by default. Remember that this store is just a plain JavaScript object containing all of our state data.
 
 Next we will make our React application aware of the store using the `Provider` component. In `src/index.js` import `Provider` from React-Redux and `store` from `src/store.js`. Wrap the root component (`Calculator`) in the `Provider` component, passing `store` as a prop to `Provider`.
